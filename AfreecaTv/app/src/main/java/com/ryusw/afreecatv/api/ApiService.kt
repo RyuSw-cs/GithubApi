@@ -1,6 +1,6 @@
 package com.ryusw.afreecatv.api
 
-import com.ryusw.afreecatv.data.models.Model.GithubDataModel
+import com.ryusw.afreecatv.models.DataModel
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -15,5 +15,5 @@ interface ApiService {
         @Query("q")inputKeyword: String,
         @Query("per_page")page: Int,
         @Query("page")section: Int
-    ): Response<GithubDataModel>
+    ): Response<DataModel>
 }
