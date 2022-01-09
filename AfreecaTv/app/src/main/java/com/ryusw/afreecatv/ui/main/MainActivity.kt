@@ -21,6 +21,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var mAdapter: RepoPagedAdapter
+    //
     private val viewModel: GithubRepoViewModel by viewModels()
 
 

@@ -1,5 +1,9 @@
 package com.ryusw.afreecatv.di
 
+<<<<<<< HEAD
+=======
+import com.ryusw.afreecatv.Util.GithubService
+>>>>>>> 72da1d3513d37de918d511e6a1cb337e6d1536d8
 import com.ryusw.afreecatv.api.ApiService
 import dagger.Module
 import dagger.Provides
@@ -11,8 +15,6 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-
-
 object AppModule {
     private const val baseUrl = "https://api.github.com"
 
