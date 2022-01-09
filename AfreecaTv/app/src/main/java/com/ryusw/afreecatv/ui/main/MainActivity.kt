@@ -1,10 +1,14 @@
 package com.ryusw.afreecatv.ui.main
 
+import android.content.Context
 import android.os.Bundle
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.ryusw.afreecatv.adapter.RepoLoadStateAdapter
 import com.ryusw.afreecatv.adapter.RepoPagedAdapter
 import com.ryusw.afreecatv.databinding.ActivityMainBinding
 import com.ryusw.afreecatv.viewmodel.GithubRepoViewModel
@@ -27,8 +31,24 @@ class MainActivity : AppCompatActivity() {
         setup()
         loadingData()
     }
-    private fun setup(){
+
+    private fun setup() {
+        binding.mainSearchInputText.setOnEditorActionListener { text, id, keyEvent ->
+            if (id == EditorInfo.IME_ACTION_SEARCH) {
+                hideKeyBoard()
+                //검색 시작
+            }
+            true
+        }
+
         mAdapter = RepoPagedAdapter()
+        mAdapter.addLoadStateListener { combinedLoadStates ->
+            binding.apply {
+                recyclerView.adapter = mAdapter.withLoadStateFooter(
+                    footer = RepoLoadStateAdapter{mAdapter.retry()}
+                )
+            }
+        }
         binding.recyclerView.apply {
             layoutManager = LinearLayoutManager(
                 this@MainActivity
@@ -38,11 +58,25 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun loadingData(){
+    private fun loadingData() {
         lifecycleScope.launch {
             viewModel.list.collect { pagingData ->
                 mAdapter.submitData(pagingData)
             }
+        }
+    }
+
+    private fun hideKeyBoard() {
+        currentFocus?.run {
+            val temp = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+            temp?.hideSoftInputFromWindow(windowToken, 0)
+        }
+    }
+
+    private fun onKeyBoard() {
+        currentFocus?.run {
+            val temp = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+            temp?.showSoftInput(binding.mainSearchInputText, InputMethodManager.SHOW_IMPLICIT)
         }
     }
 }
