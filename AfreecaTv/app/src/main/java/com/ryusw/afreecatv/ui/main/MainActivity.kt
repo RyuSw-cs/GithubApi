@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -32,14 +33,17 @@ class MainActivity : AppCompatActivity() {
 
     private fun setup() {
         binding.recyclerView.adapter = mAdapter
-        binding.recyclerView.layoutManager = LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false)
+        binding.recyclerView.layoutManager =
+            LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
-        val repo =  GithubRepository()
+        val repo = GithubRepository()
         val viewModelFactory = GithubRepoViewModelFactory(repo)
         viewModel = ViewModelProvider(this, viewModelFactory).get(GithubRepoViewModel::class.java)
 
-        binding.searchBtn.setOnClickListener { v ->
-            
+        binding.searchBtn.setOnClickListener {
+            viewControl(false)
+            binding.mainSearchInputText.requestFocus()
+            onKeyBoard()
         }
 
         binding.mainSearchInputText.setOnEditorActionListener { text, id, keyEvent ->
@@ -67,12 +71,12 @@ class MainActivity : AppCompatActivity() {
         }
 
         viewModel.result.observe(this@MainActivity, Observer {
-            mAdapter.submitData(this.lifecycle,it)
+            mAdapter.submitData(this.lifecycle, it)
         })
     }
 
     /* 키워드 값 변경 */
-    private fun search(keyword: String){
+    private fun search(keyword: String) {
         lifecycleScope.launch {
             viewModel.getKeyword(keyword)
         }
@@ -82,6 +86,9 @@ class MainActivity : AppCompatActivity() {
         currentFocus?.run {
             val temp = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             temp?.hideSoftInputFromWindow(windowToken, 0)
+            binding.mainSearchInputText.clearFocus()
+            binding.searchText.text = binding.mainSearchInputText.text
+            viewControl(true)
         }
     }
 
@@ -90,5 +97,11 @@ class MainActivity : AppCompatActivity() {
             val temp = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             temp?.showSoftInput(binding.mainSearchInputText, InputMethodManager.SHOW_IMPLICIT)
         }
+    }
+
+    private fun viewControl(searching: Boolean) {
+        binding.searchText.isVisible = searching
+        binding.searchTextTitle.isVisible = searching
+        binding.mainSearchInputText.isVisible = !searching
     }
 }

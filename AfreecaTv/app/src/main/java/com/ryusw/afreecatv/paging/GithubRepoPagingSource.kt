@@ -20,12 +20,16 @@ class GithubRepoPagingSource(private val apiService: ApiService, private val key
         val currentPage = params.key ?: STARTING_PAGE_INDEX
         return try {
             val response = apiService.getRepoData(
+              //Your Github Token
                 "token",
                 keyword,
                 10,
                 currentPage
             )
             val data = response.body()?.items ?: emptyList()
+            if(data.isEmpty()){
+                throw java.lang.Exception("no_data")
+            }
             val retrieveData = mutableListOf<RepoModel>()
             retrieveData.addAll(data)
             //로드에 성공

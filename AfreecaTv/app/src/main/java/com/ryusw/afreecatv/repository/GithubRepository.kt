@@ -11,7 +11,7 @@ class GithubRepository{
         Pager(
             config = PagingConfig(
                 pageSize = 10,
-                maxSize = 40,
+                maxSize = 100,
                 enablePlaceholders = false
             ),
             pagingSourceFactory = {GithubRepoPagingSource(AppModule.api,keyword)}
