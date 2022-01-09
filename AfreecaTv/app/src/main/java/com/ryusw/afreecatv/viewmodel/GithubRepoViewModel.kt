@@ -12,8 +12,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class GithubRepoViewModel
-@Inject constructor(private val apiService: ApiService):ViewModel(){
-    val list = Pager(PagingConfig(pageSize = 10)){
-        GithubRepoPagingSource(apiService)
+@Inject constructor(private val apiService: ApiService) : ViewModel() {
+    lateinit var word: String
+    val list = Pager(PagingConfig(pageSize = 10)) {
+        GithubRepoPagingSource(apiService, word)
     }.flow.cachedIn(viewModelScope)
 }

@@ -21,6 +21,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var mAdapter: RepoPagedAdapter
+    //지연 생성
     private val viewModel: GithubRepoViewModel by viewModels()
 
 
@@ -29,14 +30,13 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setup()
-        loadingData()
     }
 
     private fun setup() {
         binding.mainSearchInputText.setOnEditorActionListener { text, id, keyEvent ->
             if (id == EditorInfo.IME_ACTION_SEARCH) {
                 hideKeyBoard()
-                //검색 시작
+                loadingData(text.text.toString())
             }
             true
         }
@@ -58,7 +58,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun loadingData() {
+    private fun loadingData(keyword: String) {
+        viewModel.word = keyword
         lifecycleScope.launch {
             viewModel.list.collect { pagingData ->
                 mAdapter.submitData(pagingData)
