@@ -4,26 +4,24 @@ import android.content.Context
 import android.os.Bundle
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ryusw.afreecatv.adapter.RepoLoadStateAdapter
 import com.ryusw.afreecatv.adapter.RepoPagedAdapter
 import com.ryusw.afreecatv.databinding.ActivityMainBinding
+import com.ryusw.afreecatv.repository.GithubRepository
 import com.ryusw.afreecatv.viewmodel.GithubRepoViewModel
-import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
+import com.ryusw.afreecatv.viewmodel.GithubRepoViewModelFactory
 import kotlinx.coroutines.launch
 
-@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private lateinit var mAdapter: RepoPagedAdapter
-    //
-    private val viewModel: GithubRepoViewModel by viewModels()
-
+    private val mAdapter: RepoPagedAdapter by lazy { RepoPagedAdapter() }
+    private lateinit var viewModel: GithubRepoViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,22 +31,33 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setup() {
+        binding.recyclerView.adapter = mAdapter
+        binding.recyclerView.layoutManager = LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false)
+
+        val repo =  GithubRepository()
+        val viewModelFactory = GithubRepoViewModelFactory(repo)
+        viewModel = ViewModelProvider(this, viewModelFactory).get(GithubRepoViewModel::class.java)
+
+        binding.searchBtn.setOnClickListener { v ->
+            
+        }
+
         binding.mainSearchInputText.setOnEditorActionListener { text, id, keyEvent ->
             if (id == EditorInfo.IME_ACTION_SEARCH) {
                 hideKeyBoard()
-                loadingData(text.text.toString())
+                search(text.text.toString())
             }
             true
         }
 
-        mAdapter = RepoPagedAdapter()
         mAdapter.addLoadStateListener { combinedLoadStates ->
             binding.apply {
                 recyclerView.adapter = mAdapter.withLoadStateFooter(
-                    footer = RepoLoadStateAdapter{mAdapter.retry()}
+                    footer = RepoLoadStateAdapter { mAdapter.retry() }
                 )
             }
         }
+
         binding.recyclerView.apply {
             layoutManager = LinearLayoutManager(
                 this@MainActivity
@@ -56,14 +65,16 @@ class MainActivity : AppCompatActivity() {
             adapter = mAdapter
             setHasFixedSize(true)
         }
+
+        viewModel.result.observe(this@MainActivity, Observer {
+            mAdapter.submitData(this.lifecycle,it)
+        })
     }
 
-    private fun loadingData(keyword: String) {
-        viewModel.word = keyword
+    /* 키워드 값 변경 */
+    private fun search(keyword: String){
         lifecycleScope.launch {
-            viewModel.list.collect { pagingData ->
-                mAdapter.submitData(pagingData)
-            }
+            viewModel.getKeyword(keyword)
         }
     }
 

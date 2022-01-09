@@ -23,7 +23,6 @@ class RepoPagedAdapter : PagingDataAdapter<RepoModel, RepoPagedAdapter.ViewHolde
             override fun areContentsTheSame(oldItem: RepoModel, newItem: RepoModel): Boolean {
                 return oldItem == newItem
             }
-
         }
     }
 
@@ -32,7 +31,7 @@ class RepoPagedAdapter : PagingDataAdapter<RepoModel, RepoPagedAdapter.ViewHolde
         holder.binding.apply {
             mainRepoTitle.text = currentItem?.fullName
             mainRepoLanguage.text = currentItem?.language
-            mainRepoImg.load(currentItem?.owner?.avatarUrl){
+            mainRepoImg.load(currentItem?.owner?.avatarUrl) {
                 crossfade(true)
                 crossfade(1000)
             }

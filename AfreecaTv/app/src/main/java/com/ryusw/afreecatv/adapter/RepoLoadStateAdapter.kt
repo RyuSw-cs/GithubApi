@@ -28,7 +28,7 @@ class RepoLoadStateAdapter(private val retry: () -> Unit) :
 
     inner class RepoLoadStateViewHolder(private val binding: RepoListFooterBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(loadState: LoadState){
+        fun bind(loadState: LoadState) {
             binding.apply {
                 progressBar.isVisible = loadState is LoadState.Loading
             }
