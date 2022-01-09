@@ -16,7 +16,7 @@ class GithubRepoPagingSource(private val apiService: ApiService,private val word
         return try {
             val currentPage = params.key ?: 1
             //내가 검색을 누르면? 검색값을 가지면서 탐색
-            val response = apiService.getRepoData("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", word, 10, currentPage)
+            val response = apiService.getRepoData("token", word, 10, currentPage)
             val data = response.body()?.items ?: emptyList()
             val retrieveData = mutableListOf<RepoModel>()
             retrieveData.addAll(data)
