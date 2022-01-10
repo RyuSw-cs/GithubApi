@@ -4,6 +4,10 @@ import com.ryusw.afreecatv.api.ApiService
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+/**
+ * Retrofit을 사용하여 API 통신
+ */
+
 object AppModule {
     private const val BASE_URL = "https://api.github.com"
 

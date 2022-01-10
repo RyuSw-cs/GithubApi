@@ -6,8 +6,10 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.Query
 
+/**
+ * HTTP Method를 선언하기 위한 인터페이스
+ */
 interface ApiService {
-    /* Http Method 선언 */
     @GET("/search/repositories")
     suspend fun getRepoData(
         @Header("accept") accept: String,

@@ -7,13 +7,15 @@ import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.lifecycle.lifecycleScope
 import com.ryusw.afreecatv.adapter.RepoLoadStateAdapter
 import com.ryusw.afreecatv.adapter.RepoPagedAdapter
 import com.ryusw.afreecatv.databinding.ActivityMainBinding
 import com.ryusw.afreecatv.paging.GithubRepository
 import com.ryusw.afreecatv.viewModel.GithubRepoViewModel
 import com.ryusw.afreecatv.viewModel.GithubRepoViewModelFactory
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
@@ -30,7 +32,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun setup() {
         binding.recyclerView.adapter = mAdapter
-        binding.recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
         val repo = GithubRepository()
         val viewModelFactory = GithubRepoViewModelFactory(repo)
@@ -42,7 +43,7 @@ class MainActivity : AppCompatActivity() {
             onKeyBoard()
         }
 
-        binding.mainSearchInputText.setOnEditorActionListener { text, id, keyEvent ->
+        binding.mainSearchInputText.setOnEditorActionListener { text, id, _ ->
             if (id == EditorInfo.IME_ACTION_SEARCH) {
                 hideKeyBoard()
                 search(text.text.toString())
@@ -58,24 +59,15 @@ class MainActivity : AppCompatActivity() {
                 )
             }
         }
-
-        binding.recyclerView.apply {
-            layoutManager = LinearLayoutManager(
-                this@MainActivity
-            )
-            adapter = mAdapter
-            setHasFixedSize(true)
-        }
-
-        viewModel.result.observe(this) {
-            mAdapter.submitData(lifecycle, it)
-            binding.recyclerView.scrollToPosition(0)
-        }
     }
 
     /* 키워드 값 변경 */
     private fun search(keyword: String) {
-        viewModel.getKeyword(keyword)
+        lifecycleScope.launch {
+            viewModel.searchRepo(keyword).collectLatest {
+                mAdapter.submitData(lifecycle, it)
+            }
+        }
     }
 
     private fun hideKeyBoard() {

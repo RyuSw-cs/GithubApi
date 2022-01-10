@@ -8,6 +8,9 @@ import androidx.paging.LoadStateAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.ryusw.afreecatv.databinding.RepoListFooterBinding
 
+/**
+ * LoadState에 따라 변화하는 UI를 위한 어댑터
+ */
 class RepoLoadStateAdapter(private val retry: () -> Unit) :
     LoadStateAdapter<RepoLoadStateAdapter.RepoLoadStateViewHolder>() {
     override fun onBindViewHolder(
@@ -30,7 +33,7 @@ class RepoLoadStateAdapter(private val retry: () -> Unit) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(loadState: LoadState) {
             binding.apply {
-                Thread.sleep(1000)
+                /* 현재 loadState 에 따른 View 컨트롤 */
                 loadingData.isVisible = loadState is LoadState.Loading
                 errorText.isVisible = loadState is LoadState.Error
             }
