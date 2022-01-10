@@ -30,9 +30,9 @@ class RepoLoadStateAdapter(private val retry: () -> Unit) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(loadState: LoadState) {
             binding.apply {
+                Thread.sleep(1000)
                 loadingData.isVisible = loadState is LoadState.Loading
-                errorText.isVisible = loadState is LoadState.Loading
-
+                errorText.isVisible = loadState is LoadState.Error
             }
         }
     }

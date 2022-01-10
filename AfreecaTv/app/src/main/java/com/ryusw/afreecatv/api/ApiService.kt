@@ -7,6 +7,7 @@ import retrofit2.http.Header
 import retrofit2.http.Query
 
 interface ApiService {
+    /* Http Method 선언 */
     @GET("/search/repositories")
     suspend fun getRepoData(
         @Header("accept") accept: String,

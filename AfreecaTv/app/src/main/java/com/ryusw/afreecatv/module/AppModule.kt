@@ -1,4 +1,4 @@
-package com.ryusw.afreecatv.di
+package com.ryusw.afreecatv.module
 
 import com.ryusw.afreecatv.api.ApiService
 import retrofit2.Retrofit

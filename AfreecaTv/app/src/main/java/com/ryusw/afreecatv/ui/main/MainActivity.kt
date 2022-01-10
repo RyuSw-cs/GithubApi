@@ -6,17 +6,14 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ryusw.afreecatv.adapter.RepoLoadStateAdapter
 import com.ryusw.afreecatv.adapter.RepoPagedAdapter
 import com.ryusw.afreecatv.databinding.ActivityMainBinding
 import com.ryusw.afreecatv.repository.GithubRepository
-import com.ryusw.afreecatv.viewmodel.GithubRepoViewModel
-import com.ryusw.afreecatv.viewmodel.GithubRepoViewModelFactory
-import kotlinx.coroutines.launch
+import com.ryusw.afreecatv.viewModel.GithubRepoViewModel
+import com.ryusw.afreecatv.viewModel.GithubRepoViewModelFactory
 
 class MainActivity : AppCompatActivity() {
 
@@ -33,8 +30,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setup() {
         binding.recyclerView.adapter = mAdapter
-        binding.recyclerView.layoutManager =
-            LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        binding.recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
         val repo = GithubRepository()
         val viewModelFactory = GithubRepoViewModelFactory(repo)
@@ -54,10 +50,11 @@ class MainActivity : AppCompatActivity() {
             true
         }
 
-        mAdapter.addLoadStateListener { combinedLoadStates ->
+        mAdapter.addLoadStateListener {
             binding.apply {
-                recyclerView.adapter = mAdapter.withLoadStateFooter(
-                    footer = RepoLoadStateAdapter { mAdapter.retry() }
+                recyclerView.adapter = mAdapter.withLoadStateHeaderAndFooter(
+                    header = RepoLoadStateAdapter { mAdapter.retry() },
+                    footer = RepoLoadStateAdapter { mAdapter.retry() },
                 )
             }
         }
@@ -70,16 +67,15 @@ class MainActivity : AppCompatActivity() {
             setHasFixedSize(true)
         }
 
-        viewModel.result.observe(this@MainActivity, Observer {
-            mAdapter.submitData(this.lifecycle, it)
-        })
+        viewModel.result.observe(this) {
+            mAdapter.submitData(lifecycle, it)
+            binding.recyclerView.scrollToPosition(0)
+        }
     }
 
     /* 키워드 값 변경 */
     private fun search(keyword: String) {
-        lifecycleScope.launch {
-            viewModel.getKeyword(keyword)
-        }
+        viewModel.getKeyword(keyword)
     }
 
     private fun hideKeyBoard() {

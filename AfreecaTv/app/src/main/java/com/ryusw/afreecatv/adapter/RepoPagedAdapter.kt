@@ -32,8 +32,7 @@ class RepoPagedAdapter : PagingDataAdapter<RepoModel, RepoPagedAdapter.ViewHolde
             mainRepoTitle.text = currentItem?.fullName
             mainRepoLanguage.text = currentItem?.language
             mainRepoImg.load(currentItem?.owner?.avatarUrl) {
-                crossfade(true)
-                crossfade(1000)
+                crossfade(false)
             }
         }
     }

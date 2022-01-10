@@ -12,24 +12,24 @@ private const val STARTING_PAGE_INDEX = 1
 class GithubRepoPagingSource(private val apiService: ApiService, private val keyword: String) :
     PagingSource<Int, RepoModel>() {
 
+    /* 스와이프로 인한 refresh, 새 데이터를 로드할때 사용됨 */
     override fun getRefreshKey(state: PagingState<Int, RepoModel>): Int? {
-        return null
-    }
+            return null
+        }
+
+
     //데이터 로드
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, RepoModel> {
-        val currentPage = params.key ?: STARTING_PAGE_INDEX
+        val currentSection = params.key ?: STARTING_PAGE_INDEX
         return try {
             val response = apiService.getRepoData(
-              //Your Github Token
-                "token",
+                "Your git token",
                 keyword,
                 10,
-                currentPage
+                currentSection
             )
             val data = response.body()?.items ?: emptyList()
-            if(data.isEmpty()){
-                throw java.lang.Exception("no_data")
-            }
+            val totalPage = ((response.body()?.totalCount)?.div(10))?.plus(1)
             val retrieveData = mutableListOf<RepoModel>()
             retrieveData.addAll(data)
             //로드에 성공
@@ -37,9 +37,10 @@ class GithubRepoPagingSource(private val apiService: ApiService, private val key
             //prev = 위에, next = 아래
             LoadResult.Page(
                 data = retrieveData,
-                prevKey = if (currentPage == STARTING_PAGE_INDEX) null
-                else currentPage.minus(1),
-                nextKey = currentPage.plus(1)
+                //전의 데이터
+                prevKey = if (currentSection == STARTING_PAGE_INDEX) null else currentSection -1,
+                //다음 데이터
+                nextKey = if (currentSection == totalPage!!) null else currentSection + 1
             )
         } catch (e: Exception) {
             //실패
