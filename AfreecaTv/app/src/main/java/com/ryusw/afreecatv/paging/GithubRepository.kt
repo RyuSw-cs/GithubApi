@@ -2,6 +2,7 @@ package com.ryusw.afreecatv.paging
 
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
+import androidx.paging.liveData
 import com.ryusw.afreecatv.module.AppModule
 
 class GithubRepository {
@@ -9,8 +10,9 @@ class GithubRepository {
          Pager(
             config = PagingConfig(
                 pageSize = 10,
+                maxSize = 1000,
                 enablePlaceholders = true
             ),
             pagingSourceFactory = { GithubRepoPagingSource(AppModule.api, keyword) }
-        ).flow
+        ).liveData
 }

@@ -7,15 +7,13 @@ import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.ryusw.afreecatv.adapter.RepoLoadStateAdapter
 import com.ryusw.afreecatv.adapter.RepoPagedAdapter
 import com.ryusw.afreecatv.databinding.ActivityMainBinding
 import com.ryusw.afreecatv.paging.GithubRepository
 import com.ryusw.afreecatv.viewModel.GithubRepoViewModel
 import com.ryusw.afreecatv.viewModel.GithubRepoViewModelFactory
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
@@ -32,10 +30,15 @@ class MainActivity : AppCompatActivity() {
 
     private fun setup() {
         binding.recyclerView.adapter = mAdapter
-
+        binding.recyclerView.layoutManager = LinearLayoutManager(
+            this,
+            LinearLayoutManager.VERTICAL, false
+        )
         val repo = GithubRepository()
         val viewModelFactory = GithubRepoViewModelFactory(repo)
         viewModel = ViewModelProvider(this, viewModelFactory).get(GithubRepoViewModel::class.java)
+
+        binding.recyclerView.setHasFixedSize(true)
 
         binding.searchBtn.setOnClickListener {
             viewControl(false)
@@ -59,15 +62,14 @@ class MainActivity : AppCompatActivity() {
                 )
             }
         }
+        viewModel.list.observe(this){
+            mAdapter.submitData(lifecycle,it)
+        }
     }
 
     /* 키워드 값 변경 */
     private fun search(keyword: String) {
-        lifecycleScope.launch {
-            viewModel.searchRepo(keyword).collectLatest {
-                mAdapter.submitData(lifecycle, it)
-            }
-        }
+        viewModel.getKeyword(keyword)
     }
 
     private fun hideKeyBoard() {

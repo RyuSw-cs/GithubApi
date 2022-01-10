@@ -21,9 +21,8 @@ class GithubRepoPagingSource(private val apiService: ApiService, private val key
         return null
     }
 
-
     /* 데이터 로드 */
-    override suspend fun load(params: LoadParams<Int>): PagingSource.LoadResult<Int, RepoModel> {
+    override suspend fun load(params: LoadParams<Int>): LoadResult<Int, RepoModel> {
         val currentSection = params.key ?: STARTING_PAGE_INDEX
         return try {
             val response = apiService.getRepoData(
@@ -33,18 +32,17 @@ class GithubRepoPagingSource(private val apiService: ApiService, private val key
                 currentSection
             )
             val data = response.body()?.items ?: emptyList()
-            val totalPage = ((response.body()?.totalCount)?.div(10))?.plus(1)
             val retrieveData = mutableListOf<RepoModel>()
             retrieveData.addAll(data)
             //로드에 성공
             //data = 전송되는 데이터
             //prev = 위에, next = 아래
-            PagingSource.LoadResult.Page(
+            LoadResult.Page(
                 data = retrieveData,
                 //전의 데이터
                 prevKey = if (currentSection == STARTING_PAGE_INDEX) null else currentSection - 1,
                 //다음 데이터
-                nextKey = if (currentSection == totalPage!!) null else currentSection + 1
+                nextKey = if (retrieveData.isEmpty()) null else currentSection + 1
             )
         } catch (e: Exception) {
             //실패

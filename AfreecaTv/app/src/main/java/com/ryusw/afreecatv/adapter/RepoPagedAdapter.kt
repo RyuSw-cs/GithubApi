@@ -15,10 +15,21 @@ import com.ryusw.afreecatv.models.RepoModel
 class RepoPagedAdapter : PagingDataAdapter<RepoModel, RepoPagedAdapter.ViewHolder>(diffCallback) {
 
     inner class ViewHolder(val binding: RepoListLayoutBinding) :
-        RecyclerView.ViewHolder(binding.root)
+        RecyclerView.ViewHolder(binding.root){
+            fun bind(repo: RepoModel){
+                binding.apply {
+                    mainRepoTitle.text = repo?.fullName
+                    mainRepoLanguage.text = repo?.language
+                    mainRepoImg.load(repo?.owner?.avatarUrl) {
+                        crossfade(true)
+                        crossfade(1000)
+                    }
+                }
+            }
+        }
     /* DiffUtil 사용 */
     companion object {
-        val diffCallback = object : DiffUtil.ItemCallback<RepoModel>() {
+        private val diffCallback = object : DiffUtil.ItemCallback<RepoModel>() {
             override fun areItemsTheSame(oldItem: RepoModel, newItem: RepoModel): Boolean {
                 return oldItem.id == newItem.id
             }
@@ -31,23 +42,13 @@ class RepoPagedAdapter : PagingDataAdapter<RepoModel, RepoPagedAdapter.ViewHolde
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val currentItem = getItem(position)
-        holder.binding.apply {
-            mainRepoTitle.text = currentItem?.fullName
-            mainRepoLanguage.text = currentItem?.language
-            mainRepoImg.load(currentItem?.owner?.avatarUrl) {
-                crossfade(true)
-                crossfade(1000)
-            }
+        if(currentItem != null){
+            holder.bind(currentItem)
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(
-            RepoListLayoutBinding.inflate(
-                LayoutInflater.from(parent.context),
-                parent,
-                false
-            )
-        )
+        val binding = RepoListLayoutBinding.inflate(LayoutInflater.from(parent.context),parent,false)
+        return ViewHolder(binding)
     }
 }
