@@ -2,7 +2,7 @@ package com.ryusw.afreecatv.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.ryusw.afreecatv.repository.GithubRepository
+import com.ryusw.afreecatv.paging.GithubRepository
 
 class GithubRepoViewModelFactory(private val repository: GithubRepository):ViewModelProvider.Factory {
     /* viewModel 의 인자 전달을 위해 생성 */

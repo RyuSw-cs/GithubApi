@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.switchMap
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
-import com.ryusw.afreecatv.repository.GithubRepository
+import com.ryusw.afreecatv.paging.GithubRepository
 
 class GithubRepoViewModel constructor(private val repository: GithubRepository) : ViewModel() {
     private val keywordString: MutableLiveData<String> = MutableLiveData()

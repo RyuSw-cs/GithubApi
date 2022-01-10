@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.ryusw.afreecatv.adapter.RepoLoadStateAdapter
 import com.ryusw.afreecatv.adapter.RepoPagedAdapter
 import com.ryusw.afreecatv.databinding.ActivityMainBinding
-import com.ryusw.afreecatv.repository.GithubRepository
+import com.ryusw.afreecatv.paging.GithubRepository
 import com.ryusw.afreecatv.viewModel.GithubRepoViewModel
 import com.ryusw.afreecatv.viewModel.GithubRepoViewModelFactory
 
