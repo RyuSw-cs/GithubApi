@@ -7,6 +7,7 @@ import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ryusw.afreecatv.adapter.RepoLoadStateAdapter
 import com.ryusw.afreecatv.adapter.RepoPagedAdapter
@@ -14,12 +15,16 @@ import com.ryusw.afreecatv.databinding.ActivityMainBinding
 import com.ryusw.afreecatv.paging.GithubRepository
 import com.ryusw.afreecatv.viewModel.GithubRepoViewModel
 import com.ryusw.afreecatv.viewModel.GithubRepoViewModelFactory
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private val mAdapter: RepoPagedAdapter by lazy { RepoPagedAdapter() }
     private lateinit var viewModel: GithubRepoViewModel
+    private var count = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,14 +67,16 @@ class MainActivity : AppCompatActivity() {
                 )
             }
         }
-        viewModel.list.observe(this){
-            mAdapter.submitData(lifecycle,it)
-        }
+
     }
 
     /* 키워드 값 변경 */
     private fun search(keyword: String) {
-        viewModel.getKeyword(keyword)
+        lifecycleScope.launch {
+            viewModel.searchRepo(keyword).collectLatest {
+                mAdapter.submitData(it)
+                binding.recyclerView.scrollToPosition( count.plus(8))
+            }}
     }
 
     private fun hideKeyBoard() {

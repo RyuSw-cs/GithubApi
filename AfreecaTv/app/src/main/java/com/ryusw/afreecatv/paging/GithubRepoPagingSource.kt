@@ -4,6 +4,8 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.ryusw.afreecatv.api.ApiService
 import com.ryusw.afreecatv.models.RepoModel
+import okio.IOException
+import retrofit2.HttpException
 
 private const val STARTING_PAGE_INDEX = 1
 
@@ -31,6 +33,7 @@ class GithubRepoPagingSource(private val apiService: ApiService, private val key
                 10,
                 currentSection
             )
+
             val data = response.body()?.items ?: emptyList()
             val retrieveData = mutableListOf<RepoModel>()
             retrieveData.addAll(data)
@@ -44,9 +47,11 @@ class GithubRepoPagingSource(private val apiService: ApiService, private val key
                 //다음 데이터
                 nextKey = if (retrieveData.isEmpty()) null else currentSection + 1
             )
-        } catch (e: Exception) {
+        } catch (e: IOException) {
             //실패
-            LoadResult.Error(e)
+            return LoadResult.Error(e)
+        }  catch (e: HttpException){
+            return LoadResult.Error(e)
         }
     }
 }

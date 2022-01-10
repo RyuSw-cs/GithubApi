@@ -27,7 +27,10 @@ class RepoPagedAdapter : PagingDataAdapter<RepoModel, RepoPagedAdapter.ViewHolde
                 }
             }
         }
-    /* DiffUtil 사용 */
+
+    /**
+     * DiffUtil 사용
+     */
     companion object {
         private val diffCallback = object : DiffUtil.ItemCallback<RepoModel>() {
             override fun areItemsTheSame(oldItem: RepoModel, newItem: RepoModel): Boolean {
