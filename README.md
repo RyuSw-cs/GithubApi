@@ -6,11 +6,11 @@ Github Search repository api를 사용하였으며 키워드에 맞는 레포지
 </br>
 <hr>
 
-### 플랫폼
+### 📱 플랫폼
 <img src="https://img.shields.io/badge/Android-3DDC84?style=flat-square&logo=Android&logoColor=white"/>
 
 
-### 언어
+### 🙆‍♂️ 언어
 <img src="https://img.shields.io/badge/Kotlin-0095D5?style=flat-square&logo=Kotlin&logoColor=white"/> 
 </br>
 
@@ -24,7 +24,7 @@ Github Search repository api를 사용하였으며 키워드에 맞는 레포지
 
 #### 주요 기술🛠
 
-<strong>MVVM &nbsp; Retrofit2 &nbsp;DataBinding &nbsp; Glide &nbsp;</strong>
+<strong>MVVM &nbsp; Retrofit2 &nbsp;DataBinding &nbsp; Coil &nbsp;</strong>
 
 <hr>
 
