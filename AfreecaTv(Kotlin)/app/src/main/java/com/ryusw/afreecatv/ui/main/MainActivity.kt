@@ -15,7 +15,7 @@ import com.ryusw.afreecatv.databinding.ActivityMainBinding
 import com.ryusw.afreecatv.paging.GithubRepository
 import com.ryusw.afreecatv.viewModel.GithubRepoViewModel
 import com.ryusw.afreecatv.viewModel.GithubRepoViewModelFactory
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 
@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private val mAdapter: RepoPagedAdapter by lazy { RepoPagedAdapter() }
     private lateinit var viewModel: GithubRepoViewModel
-    private var count = 0
+    private var check = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,16 +67,20 @@ class MainActivity : AppCompatActivity() {
                 )
             }
         }
-
     }
 
     /* 키워드 값 변경 */
     private fun search(keyword: String) {
-        lifecycleScope.launch {
-            viewModel.searchRepo(keyword).collectLatest {
-                mAdapter.submitData(it)
-                binding.recyclerView.scrollToPosition( count.plus(8))
-            }}
+        if(!check){
+            lifecycleScope.launch {
+                check = true
+                viewModel.searchRepo(keyword).collect {
+                    mAdapter.submitData(it)
+                }}
+        }
+        else{
+            viewModel.searchRepo(keyword)
+        }
     }
 
     private fun hideKeyBoard() {

@@ -14,7 +14,7 @@ import com.ryusw.afreecatv.models.RepoModel
  */
 class RepoPagedAdapter : PagingDataAdapter<RepoModel, RepoPagedAdapter.ViewHolder>(diffCallback) {
 
-    inner class ViewHolder(val binding: RepoListLayoutBinding) :
+    inner class ViewHolder(private val binding: RepoListLayoutBinding) :
         RecyclerView.ViewHolder(binding.root){
             fun bind(repo: RepoModel){
                 binding.apply {
@@ -34,7 +34,7 @@ class RepoPagedAdapter : PagingDataAdapter<RepoModel, RepoPagedAdapter.ViewHolde
     companion object {
         private val diffCallback = object : DiffUtil.ItemCallback<RepoModel>() {
             override fun areItemsTheSame(oldItem: RepoModel, newItem: RepoModel): Boolean {
-                return oldItem.id == newItem.id
+                return oldItem.fullName == newItem.fullName
             }
 
             override fun areContentsTheSame(oldItem: RepoModel, newItem: RepoModel): Boolean {

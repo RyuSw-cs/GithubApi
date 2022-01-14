@@ -17,6 +17,8 @@ object AppModule {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
+
+    //lazy 를 통해 초기화가 필요한 시점에 초기화 -> 또한 변하지 않기 때문에 val 로 사용한다.
     val api:ApiService by lazy {
         retrofit.create(ApiService::class.java)
     }

@@ -1,6 +1,5 @@
 package com.ryusw.afreecatv.viewModel
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -14,10 +13,8 @@ import kotlinx.coroutines.flow.Flow
  * 메인 액티비티에서 keyword를 가져온다.
  */
 class GithubRepoViewModel constructor(private val repository: GithubRepository) : ViewModel() {
-    private val currentKeyword : MutableLiveData<String> = MutableLiveData()
 
     private var oldKeyword:String? = null
-
     private var oldResult: Flow<PagingData<RepoModel>>? = null
 
     fun searchRepo(queryString: String): Flow<PagingData<RepoModel>> {

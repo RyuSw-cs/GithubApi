@@ -26,6 +26,7 @@ class GithubRepoPagingSource(private val apiService: ApiService, private val key
     /* 데이터 로드 */
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, RepoModel> {
         val currentSection = params.key ?: STARTING_PAGE_INDEX
+
         return try {
             val response = apiService.getRepoData(
                 "Your git token",
@@ -33,7 +34,6 @@ class GithubRepoPagingSource(private val apiService: ApiService, private val key
                 10,
                 currentSection
             )
-
             val data = response.body()?.items ?: emptyList()
             val retrieveData = mutableListOf<RepoModel>()
             retrieveData.addAll(data)

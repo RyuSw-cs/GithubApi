@@ -9,8 +9,9 @@ class GithubRepository {
          Pager(
             config = PagingConfig(
                 pageSize = 10,
-                maxSize = 1000,
-                enablePlaceholders = true
+                initialLoadSize = 10,
+                prefetchDistance = 10,
+                enablePlaceholders = true,
             ),
             pagingSourceFactory = { GithubRepoPagingSource(AppModule.api, keyword) }
         ).flow
